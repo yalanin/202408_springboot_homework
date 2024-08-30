@@ -7,6 +7,10 @@
 
   > url：/users/register
 * 查詢使用者資訊
+
+  > HTTP method：GET
+  
+  > url：/users/{userId} 
 * 更新使用者資訊
 * 刪除使用者
 * 新增資產
