@@ -12,7 +12,15 @@
   
   > url：/users/{userId} 
 * 更新使用者資訊
+
+  > HTTP method：PUT
+
+  > url：/users/{userId} 
 * 刪除使用者
+
+  > HTTP method：DELETE
+
+  > url：/users/{userId} 
 * 新增資產
 * 查詢資產
 * 更新資產
