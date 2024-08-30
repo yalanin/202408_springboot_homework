@@ -75,6 +75,16 @@ public class UserDaoImpl implements UserDao {
         namedParameterJdbcTemplate.update(sql, map);
     }
 
+    @Override
+    public void deleteUserById(Integer userId) {
+        String sql = "DELETE FROM users WHERE user_id = :userId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+
+        namedParameterJdbcTemplate.update(sql, map);
+    }
+
     // 統一執行 sql 語法並回傳結果
     private User returnUserByQuery(String sql, Map map) {
         List<User> list = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());

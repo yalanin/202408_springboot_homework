@@ -10,4 +10,6 @@ public interface UserService {
     User getUserById(Integer userId);
 
     void updateUser(Integer userId, UserRequest userRequest);
+
+    void deleteUserById(Integer userId);
 }

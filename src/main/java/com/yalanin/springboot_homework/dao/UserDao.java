@@ -12,4 +12,6 @@ public interface UserDao {
     Integer createUser(UserRegisterRequest userRegisterRequest);
 
     void updateUser(Integer userId, UserRequest userRequest);
+
+    void deleteUserById(Integer userId);
 }
