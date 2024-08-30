@@ -1,6 +1,7 @@
 package com.yalanin.springboot_homework.controller;
 
 import com.yalanin.springboot_homework.dto.UserRegisterRequest;
+import com.yalanin.springboot_homework.dto.UserRequest;
 import com.yalanin.springboot_homework.model.User;
 import com.yalanin.springboot_homework.service.UserService;
 import jakarta.validation.Valid;
@@ -28,6 +29,19 @@ public class UserController {
         User user = userService.getUserById(userId);
         if(user != null) {
             return ResponseEntity.status(HttpStatus.OK).body(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer userId,
+                                           @RequestBody @Valid UserRequest userRequest) {
+        User user = userService.getUserById(userId);
+        if(user != null) {
+            userService.updateUser(userId, userRequest);
+            User updatedUser = userService.getUserById(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

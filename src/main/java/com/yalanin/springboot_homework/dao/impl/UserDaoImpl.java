@@ -2,6 +2,7 @@ package com.yalanin.springboot_homework.dao.impl;
 
 import com.yalanin.springboot_homework.dao.UserDao;
 import com.yalanin.springboot_homework.dto.UserRegisterRequest;
+import com.yalanin.springboot_homework.dto.UserRequest;
 import com.yalanin.springboot_homework.model.User;
 import com.yalanin.springboot_homework.rowmapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,18 @@ public class UserDaoImpl implements UserDao {
 
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
         return keyHolder.getKey().intValue();
+    }
+
+    @Override
+    public void updateUser(Integer userId, UserRequest userRequest) {
+        String sql = "UPDATE users SET email = :email, username = :username WHERE user_id = :userId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("email", userRequest.getEmail());
+        map.put("username", userRequest.getUsername());
+
+        namedParameterJdbcTemplate.update(sql, map);
     }
 
     // 統一執行 sql 語法並回傳結果

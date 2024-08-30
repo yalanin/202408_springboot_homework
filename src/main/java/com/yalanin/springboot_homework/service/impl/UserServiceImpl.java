@@ -2,6 +2,7 @@ package com.yalanin.springboot_homework.service.impl;
 
 import com.yalanin.springboot_homework.dao.UserDao;
 import com.yalanin.springboot_homework.dto.UserRegisterRequest;
+import com.yalanin.springboot_homework.dto.UserRequest;
 import com.yalanin.springboot_homework.model.User;
 import com.yalanin.springboot_homework.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
+    }
+
+    @Override
+    public void updateUser(Integer userId, UserRequest userRequest) {
+        userDao.updateUser(userId, userRequest);
     }
 }
