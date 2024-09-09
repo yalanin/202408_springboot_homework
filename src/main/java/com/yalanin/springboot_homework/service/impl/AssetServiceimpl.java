@@ -3,6 +3,7 @@ package com.yalanin.springboot_homework.service.impl;
 import com.yalanin.springboot_homework.dao.AssetDao;
 import com.yalanin.springboot_homework.dao.UserDao;
 import com.yalanin.springboot_homework.dto.AssetCreateRequest;
+import com.yalanin.springboot_homework.dto.AssetQueryParam;
 import com.yalanin.springboot_homework.model.Asset;
 import com.yalanin.springboot_homework.model.User;
 import com.yalanin.springboot_homework.service.AssetService;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Component
 public class AssetServiceimpl implements AssetService {
@@ -39,5 +42,19 @@ public class AssetServiceimpl implements AssetService {
     @Override
     public Asset findAssetById(Integer assetId) {
         return assetDao.findAssetById(assetId);
+    }
+
+    @Override
+    public List<Asset> getAssetsByUserId(AssetQueryParam assetQueryParam) {
+        User user = userDao.getUserById(assetQueryParam.getUserId());
+        if(user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return assetDao.getAssetsByUserId(assetQueryParam);
+    }
+
+    @Override
+    public Integer countAssets(AssetQueryParam assetQueryParam) {
+        return assetDao.countAssets(assetQueryParam);
     }
 }

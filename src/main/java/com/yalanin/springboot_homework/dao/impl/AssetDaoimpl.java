@@ -2,6 +2,7 @@ package com.yalanin.springboot_homework.dao.impl;
 
 import com.yalanin.springboot_homework.dao.AssetDao;
 import com.yalanin.springboot_homework.dto.AssetCreateRequest;
+import com.yalanin.springboot_homework.dto.AssetQueryParam;
 import com.yalanin.springboot_homework.model.Asset;
 import com.yalanin.springboot_homework.rowmapper.AssetRowmapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +52,25 @@ public class AssetDaoimpl implements AssetDao {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public List<Asset> getAssetsByUserId(AssetQueryParam assetQueryParam) {
+        String sql = "SELECT asset_id, user_id, name, amount, created_at, updated_at FROM assets "
+                + "WHERE user_id = :userId ";
+        sql += "LIMIT :limit OFFSET :offset";
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", assetQueryParam.getUserId());
+        map.put("limit", assetQueryParam.getLimit());
+        map.put("offset", assetQueryParam.getOffset());
+        return namedParameterJdbcTemplate.query(sql, map, new AssetRowmapper());
+    }
+
+    @Override
+    public Integer countAssets(AssetQueryParam assetQueryParam) {
+        String sql = "SELECT count(*) FROM assets WHERE user_id = :userId";
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", assetQueryParam.getUserId());
+        return namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
     }
 }
