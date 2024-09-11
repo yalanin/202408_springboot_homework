@@ -10,7 +10,9 @@ public class AssetRowmapper implements RowMapper<Asset> {
     @Override
     public Asset mapRow(ResultSet rs, int rowNum) throws SQLException {
         Asset asset = new Asset();
+        asset.setUser_id(rs.getInt("user_id"));
         asset.setAsset_id(rs.getInt("asset_id"));
+        asset.setName(rs.getString("name"));
         asset.setAmount(rs.getInt("amount"));
         asset.setCreatedAt(rs.getTimestamp("created_at"));
         asset.setUpdatedAt(rs.getTimestamp("updated_at"));

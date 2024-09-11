@@ -2,6 +2,7 @@ package com.yalanin.springboot_homework.controller;
 
 import com.yalanin.springboot_homework.dto.AssetCreateRequest;
 import com.yalanin.springboot_homework.dto.AssetQueryParam;
+import com.yalanin.springboot_homework.dto.AssetRequest;
 import com.yalanin.springboot_homework.model.Asset;
 import com.yalanin.springboot_homework.service.AssetService;
 import com.yalanin.springboot_homework.util.Page;
@@ -25,7 +26,7 @@ public class AssetController {
     public ResponseEntity<Asset> createAsset(@PathVariable Integer userId,
                                              @RequestBody @Valid AssetCreateRequest assetCreateRequest) {
         Integer assetId = assetService.createAsset(userId, assetCreateRequest);
-        Asset asset = assetService.findAssetById(assetId);
+        Asset asset = assetService.getAssetById(assetId);
         return ResponseEntity.status(HttpStatus.OK).body(asset);
     }
 
@@ -48,5 +49,18 @@ public class AssetController {
         page.setTotal(count);
         page.setResults(assetList);
         return ResponseEntity.status(HttpStatus.OK).body(page);
+    }
+
+    @PutMapping("/assets/{assetId}")
+    public ResponseEntity<Asset> updateAsset(@PathVariable Integer assetId,
+                                             @RequestBody @Valid AssetRequest assetRequest) {
+        Asset asset = assetService.getAssetById(assetId);
+        if(asset == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            assetService.updateAsset(assetId, assetRequest);
+            Asset updatedAsset = assetService.getAssetById(assetId);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedAsset);
+        }
     }
 }

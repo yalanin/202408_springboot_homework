@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public class AssetCreateRequest {
+public class AssetRequest {
     @NotBlank
     private String name;
 
@@ -12,19 +12,19 @@ public class AssetCreateRequest {
     @PositiveOrZero
     private Integer amount;
 
-    public @NotNull String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotNull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public @NotNull @PositiveOrZero Integer getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
-    public void setAmount(@NotNull @PositiveOrZero Integer amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
     }
 }

@@ -4,6 +4,7 @@ import com.yalanin.springboot_homework.dao.AssetDao;
 import com.yalanin.springboot_homework.dao.UserDao;
 import com.yalanin.springboot_homework.dto.AssetCreateRequest;
 import com.yalanin.springboot_homework.dto.AssetQueryParam;
+import com.yalanin.springboot_homework.dto.AssetRequest;
 import com.yalanin.springboot_homework.model.Asset;
 import com.yalanin.springboot_homework.model.User;
 import com.yalanin.springboot_homework.service.AssetService;
@@ -40,11 +41,6 @@ public class AssetServiceimpl implements AssetService {
     }
 
     @Override
-    public Asset findAssetById(Integer assetId) {
-        return assetDao.findAssetById(assetId);
-    }
-
-    @Override
     public List<Asset> getAssetsByUserId(AssetQueryParam assetQueryParam) {
         User user = userDao.getUserById(assetQueryParam.getUserId());
         if(user == null) {
@@ -56,5 +52,15 @@ public class AssetServiceimpl implements AssetService {
     @Override
     public Integer countAssets(AssetQueryParam assetQueryParam) {
         return assetDao.countAssets(assetQueryParam);
+    }
+
+    @Override
+    public Asset getAssetById(Integer assetId) {
+        return assetDao.getAssetById(assetId);
+    }
+
+    @Override
+    public void updateAsset(Integer assetId, AssetRequest assetRequest) {
+        assetDao.updateAsset(assetId, assetRequest);
     }
 }

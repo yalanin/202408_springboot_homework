@@ -3,6 +3,7 @@ package com.yalanin.springboot_homework.dao.impl;
 import com.yalanin.springboot_homework.dao.AssetDao;
 import com.yalanin.springboot_homework.dto.AssetCreateRequest;
 import com.yalanin.springboot_homework.dto.AssetQueryParam;
+import com.yalanin.springboot_homework.dto.AssetRequest;
 import com.yalanin.springboot_homework.model.Asset;
 import com.yalanin.springboot_homework.rowmapper.AssetRowmapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class AssetDaoimpl implements AssetDao {
+public class AssetDaoImpl implements AssetDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -38,7 +39,7 @@ public class AssetDaoimpl implements AssetDao {
     }
 
     @Override
-    public Asset findAssetById(Integer assetId) {
+    public Asset getAssetById(Integer assetId) {
         String sql = "SELECT asset_id, user_id, name, amount, created_at, updated_at FROM assets "
                 + "WHERE asset_id = :assetId";
 
@@ -72,5 +73,15 @@ public class AssetDaoimpl implements AssetDao {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", assetQueryParam.getUserId());
         return namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+    }
+
+    @Override
+    public void updateAsset(Integer assetId, AssetRequest assetRequest) {
+        String sql = "UPDATE assets SET name = :name, amount = :amount WHERE asset_id = :assetId";
+        Map<String, Object> map = new HashMap<>();
+        map.put("assetId", assetId);
+        map.put("name", assetRequest.getName());
+        map.put("amount", assetRequest.getAmount());
+        namedParameterJdbcTemplate.update(sql, map);
     }
 }
