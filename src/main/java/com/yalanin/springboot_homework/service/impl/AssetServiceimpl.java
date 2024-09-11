@@ -59,8 +59,15 @@ public class AssetServiceimpl implements AssetService {
         return assetDao.getAssetById(assetId);
     }
 
+    @Transactional
     @Override
     public void updateAsset(Integer assetId, AssetRequest assetRequest) {
         assetDao.updateAsset(assetId, assetRequest);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAssetById(Integer assetId) {
+        assetDao.deleteAssetById(assetId);
     }
 }

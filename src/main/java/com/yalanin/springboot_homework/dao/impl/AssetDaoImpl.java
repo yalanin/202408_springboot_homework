@@ -84,4 +84,20 @@ public class AssetDaoImpl implements AssetDao {
         map.put("amount", assetRequest.getAmount());
         namedParameterJdbcTemplate.update(sql, map);
     }
+
+    @Override
+    public void deleteAssetById(Integer assetId) {
+        String sql = "DELETE FROM assets WHERE asset_id = :assetId";
+        Map<String, Object> map = new HashMap<>();
+        map.put("assetId", assetId);
+        namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    @Override
+    public void deleteAssetByUserId(Integer userId) {
+        String sql = "DELETE FROM assets WHERE user_id = :userId";
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        namedParameterJdbcTemplate.update(sql, map);
+    }
 }

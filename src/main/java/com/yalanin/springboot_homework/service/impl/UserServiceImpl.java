@@ -1,5 +1,6 @@
 package com.yalanin.springboot_homework.service.impl;
 
+import com.yalanin.springboot_homework.dao.AssetDao;
 import com.yalanin.springboot_homework.dao.UserDao;
 import com.yalanin.springboot_homework.dto.UserRegisterRequest;
 import com.yalanin.springboot_homework.dto.UserRequest;
@@ -8,6 +9,7 @@ import com.yalanin.springboot_homework.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,6 +17,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private AssetDao assetDao;
 
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
@@ -41,8 +46,11 @@ public class UserServiceImpl implements UserService {
         userDao.updateUser(userId, userRequest);
     }
 
+    @Transactional
     @Override
     public void deleteUserById(Integer userId) {
+        // 使用者刪除後，名下相關資產也應該跟著刪除
+        assetDao.deleteAssetByUserId(userId);
         userDao.deleteUserById(userId);
     }
 }

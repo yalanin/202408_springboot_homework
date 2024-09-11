@@ -17,4 +17,6 @@ public interface AssetService {
     List<Asset> getAssetsByUserId(AssetQueryParam assetQueryParam);
 
     void updateAsset(Integer assetId, AssetRequest assetRequest);
+
+    void deleteAssetById(Integer assetId);
 }
