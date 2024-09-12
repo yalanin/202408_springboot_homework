@@ -19,8 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Component
-public class AssetServiceimpl implements AssetService {
-    private final static Logger log = LoggerFactory.getLogger(AssetServiceimpl.class);
+public class AssetServiceImpl implements AssetService {
+    private final static Logger log = LoggerFactory.getLogger(AssetServiceImpl.class);
     @Autowired
     private AssetDao assetDao;
 
