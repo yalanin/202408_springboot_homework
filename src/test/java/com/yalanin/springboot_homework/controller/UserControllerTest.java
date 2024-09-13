@@ -6,8 +6,6 @@ import com.yalanin.springboot_homework.dto.UserRegisterRequest;
 import com.yalanin.springboot_homework.dto.UserRequest;
 import com.yalanin.springboot_homework.model.User;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Sql(scripts = "/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//@Sql(scripts = "/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -95,10 +93,10 @@ class UserControllerTest {
     @Test
     public void getUserSuccess() throws Exception {
         // 先註冊一個帳號
-        createUser();
+        // createUser();
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/{userId}", 1);
-        User user = userDao.getUserById(1);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/{userId}", 2);
+        User user = userDao.getUserById(2);
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -120,7 +118,7 @@ class UserControllerTest {
     @Test
     public void updateUserSuccess() throws Exception {
         // 先註冊一個帳號
-        createUser();
+        // createUser();
 
         UserRequest userRequest = new UserRequest();
         userRequest.setEmail("aaa@example.com");
@@ -128,7 +126,7 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(userRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/users/{userId}", 1)
+                .put("/users/{userId}", 2)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -142,7 +140,7 @@ class UserControllerTest {
     @Test
     public void updateUserillegalArgument() throws Exception {
         // 先註冊一個帳號
-        createUser();
+        // createUser();
 
         UserRequest userRequest = new UserRequest();
         userRequest.setEmail("aaa");
@@ -170,7 +168,7 @@ class UserControllerTest {
     private RequestBuilder createUserRequest() throws Exception {
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
         userRegisterRequest.setPassword("12345678");
-        userRegisterRequest.setEmail("test_create_user@example.com");
+        userRegisterRequest.setEmail("test_create_user123@example.com");
         userRegisterRequest.setUsername("test user");
         String json = objectMapper.writeValueAsString(userRegisterRequest);
         return MockMvcRequestBuilders

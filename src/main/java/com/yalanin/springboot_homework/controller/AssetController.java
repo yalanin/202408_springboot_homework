@@ -27,7 +27,7 @@ public class AssetController {
                                              @RequestBody @Valid AssetCreateRequest assetCreateRequest) {
         Integer assetId = assetService.createAsset(userId, assetCreateRequest);
         Asset asset = assetService.getAssetById(assetId);
-        return ResponseEntity.status(HttpStatus.OK).body(asset);
+        return ResponseEntity.status(HttpStatus.CREATED).body(asset);
     }
 
     @GetMapping("/users/{userId}/assets")
