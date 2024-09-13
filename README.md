@@ -22,9 +22,25 @@
 
   > url：/users/{userId} 
 * 新增資產
+
+  > HTTP method：POST
+
+  > url：/users/{userId}/assets
 * 查詢資產
+
+  > HTTP method：GET
+
+  > url：/users/{userId}/assets
 * 更新資產
+
+  > HTTP method：PUT
+
+  > url：/assets/{assetId}
 * 刪除資產
+
+  > HTTP method：DELETE
+
+  > url：/assets/{assetId}
 
 ### 如何運行專案
 下載專案之後，直接開啟 server 依循 API 說明請求即可。
