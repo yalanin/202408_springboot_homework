@@ -50,13 +50,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Integer userId) {
-        Object redirsUser = redisService.getValue("user_" + userId, User.class);
+        Object redirsUser = redisService.getValue("user_" + userId);
 
         if(redirsUser == null) {
             log.warn("redis 找不到 user");
             // 把資料存到 redis 裡面
             saveUserToRedis(userId);
-            redirsUser = redisService.getValue("user_" + userId, User.class);
+            redirsUser = redisService.getValue("user_" + userId);
         }
 
         log.warn("回傳 redis user");

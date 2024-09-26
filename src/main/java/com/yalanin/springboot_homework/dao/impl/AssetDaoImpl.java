@@ -68,6 +68,20 @@ public class AssetDaoImpl implements AssetDao {
     }
 
     @Override
+    public List<Integer> getAssetIdsByUserId(AssetQueryParam assetQueryParam) {
+        String sql = "SELECT asset_id FROM assets WHERE user_id = :userId ";
+        sql += "LIMIT :limit OFFSET :offset";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", assetQueryParam.getUserId());
+        map.put("limit", assetQueryParam.getLimit());
+        map.put("offset", assetQueryParam.getOffset());
+
+        // 查詢 asset_id 並將結果存入 List<Integer>
+        return namedParameterJdbcTemplate.queryForList(sql, map, Integer.class);
+    }
+
+    @Override
     public Integer countAssets(AssetQueryParam assetQueryParam) {
         String sql = "SELECT count(*) FROM assets WHERE user_id = :userId";
         Map<String, Object> map = new HashMap<>();

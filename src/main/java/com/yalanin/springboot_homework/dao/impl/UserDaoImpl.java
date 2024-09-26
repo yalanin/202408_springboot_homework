@@ -88,7 +88,7 @@ public class UserDaoImpl implements UserDao {
     // 統一執行 sql 語法並回傳結果
     private User returnUserByQuery(String sql, Map map) {
         List<User> list = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
-        if(list.size() > 0) {
+        if(!list.isEmpty()) {
             return list.get(0);
         } else {
             return null;

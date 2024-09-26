@@ -16,6 +16,8 @@ public interface AssetDao {
 
     List<Asset> getAssetsByUserId(AssetQueryParam assetQueryParam);
 
+    List<Integer> getAssetIdsByUserId(AssetQueryParam assetQueryParam);
+
     void updateAsset(Integer assetId, AssetRequest assetRequest);
 
     void deleteAssetById(Integer assetId);
