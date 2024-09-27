@@ -14,6 +14,11 @@ import com.yalanin.springboot_homework.service.AssetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +37,7 @@ public class AssetServiceImpl implements AssetService {
     private UserDao userDao;
 
     @Autowired
-    private RedisService redisService;
+    private CacheManager cacheManager;
 
     @Transactional
     @Override
@@ -44,10 +49,7 @@ public class AssetServiceImpl implements AssetService {
             log.warn("使用者 ID {} 不存在", userId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        // 用 asset id 儲存 資產
-        Integer assetId = assetDao.createAsset(userId, assetCreateRequest);
-        saveAssetToRedis(assetId);
-        return assetId;
+        return assetDao.createAsset(userId, assetCreateRequest);
     }
 
     @Override
@@ -61,22 +63,16 @@ public class AssetServiceImpl implements AssetService {
         List<Integer> assetIds = assetDao.getAssetIdsByUserId(assetQueryParam);
         List<Asset> assetList = new ArrayList<>();
 
+        Cache cache = cacheManager.getCache("assetCache");
         for (int assetId : assetIds) {
-            log.warn("assetId: " + assetId);
+            Asset redisAsset = cache.get(assetId, Asset.class);
 
-            Object redisAsset = redisService.getValue("asset_" + assetId);
-
-            log.warn("redisAsset: " + redisAsset);
-
-            if(redisAsset == null) {
-                // 用 asset id 儲存 資產
-                saveAssetToRedis(assetId);
-                redisAsset = redisService.getValue("asset_" + assetId);
-            }
-            // 避免很倒霉剛好有人把 asset 刪掉
             if(redisAsset != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                assetList.add(objectMapper.convertValue(redisAsset, Asset.class));
+                assetList.add(redisAsset);
+            } else {
+                Asset asset = assetDao.getAssetById(assetId);
+                cache.put(assetId, asset);
+                assetList.add(asset);
             }
         }
         return assetList;
@@ -87,36 +83,29 @@ public class AssetServiceImpl implements AssetService {
         return assetDao.countAssets(assetQueryParam);
     }
 
+    @Cacheable(value = "assetCache", key = "#assetId")
     @Override
     public Asset getAssetById(Integer assetId) {
-        Object redisAsset = redisService.getValue("asset_" + assetId);
-        if(redisAsset == null) {
-            // 用 asset id 儲存 資產
-            saveAssetToRedis(assetId);
-            redisAsset = redisService.getValue("asset_" + assetId);
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(redisAsset, Asset.class);
+        return saveAssetToRedis(assetId);
     }
 
+    @CacheEvict(value = "assetCache", key = "#assetId")
     @Transactional
     @Override
     public void updateAsset(Integer assetId, AssetRequest assetRequest) {
         assetDao.updateAsset(assetId, assetRequest);
-        // 用 asset id 儲存 變動後的資產
-        saveAssetToRedis(assetId);
     }
 
+    @CacheEvict(value = "assetCache", key = "#assetId")
     @Transactional
     @Override
     public void deleteAssetById(Integer assetId) {
         assetDao.deleteAssetById(assetId);
-        // 刪除 redis 中的紀錄
-        redisService.deleteValue("asset_" + assetId);
     }
 
-    private void saveAssetToRedis(Integer assetId) {
-        Asset asset = assetDao.getAssetById(assetId);
-        redisService.setValue("asset_" + assetId, asset);
+    // 把資料存到 redis 裡面
+    @CachePut(value = "assetCache", key = "#assetId")
+    private Asset saveAssetToRedis(Integer assetId) {
+        return assetDao.getAssetById(assetId);
     }
 }
