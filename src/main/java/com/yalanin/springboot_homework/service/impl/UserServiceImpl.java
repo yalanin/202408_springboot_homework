@@ -1,11 +1,12 @@
 package com.yalanin.springboot_homework.service.impl;
 
-import com.yalanin.springboot_homework.dao.AssetDao;
-import com.yalanin.springboot_homework.dao.UserDao;
 import com.yalanin.springboot_homework.dto.UserRegisterRequest;
 import com.yalanin.springboot_homework.dto.UserRequest;
+import com.yalanin.springboot_homework.jpa_repository.AssetRepository;
+import com.yalanin.springboot_homework.jpa_repository.UserRepository;
 import com.yalanin.springboot_homework.model.User;
 import com.yalanin.springboot_homework.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
+
 @Component
 public class UserServiceImpl implements UserService {
     private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    private UserDao userDao;
+    private UserRepository userRepository;
 
     @Autowired
-    private AssetDao assetDao;
+    private AssetRepository assetRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
         // 檢查電子信箱是否使用過
-        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
+        User user = userRepository.findByEmail(userRegisterRequest.getEmail());
         if(user != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -40,7 +46,12 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
         userRegisterRequest.setPassword(hashedPassword);
 
-        return  userDao.createUser(userRegisterRequest);
+        User newUser = modelMapper.map(userRegisterRequest, User.class);
+        newUser.setCreatedAt(new Date());
+        newUser.setUpdatedAt(new Date());
+
+        User createdUser = userRepository.save(newUser);
+        return createdUser.getUserId();
     }
 
     @Cacheable(value = "userCache", key = "#userId")
@@ -52,7 +63,10 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "userCache", key = "#userId")
     @Override
     public void updateUser(Integer userId, UserRequest userRequest) {
-        userDao.updateUser(userId, userRequest);
+        User updatedUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        modelMapper.map(userRequest, updatedUser);
+        userRepository.save(updatedUser);
     }
 
     @CacheEvict(value = "userCache", key = "#userId")
@@ -60,13 +74,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(Integer userId) {
         // 使用者刪除後，名下相關資產也應該跟著刪除
-        assetDao.deleteAssetByUserId(userId);
-        userDao.deleteUserById(userId);
+        assetRepository.deleteByUserId(userId);
+        userRepository.deleteById(userId);
     }
 
     // 把資料存到 redis 裡面
     @CachePut(value = "userCache", key = "#userId")
     private User saveUserToRedis(Integer userId) {
-        return userDao.getUserById(userId);
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

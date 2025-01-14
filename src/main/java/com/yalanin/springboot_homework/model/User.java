@@ -2,18 +2,36 @@ package com.yalanin.springboot_homework.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Integer userId;
+
+    @Column(name = "username", nullable = false)
     private String username;
+
+    @Column(name = "email", nullable = false)
     private String email;
+
     @JsonIgnore
+    @Column(name = "password", nullable = false)
     private String password;
+
     @JsonProperty("created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
     private Date createdAt;
+
     @JsonProperty("updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
     public Integer getUserId() {
