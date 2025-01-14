@@ -13,7 +13,7 @@ public class Asset {
     @Column(name = "asset_id")
     private Integer asset_id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, insertable = false, updatable = false)
     private Integer user_id;
 
     @Column(name = "name", nullable = false)

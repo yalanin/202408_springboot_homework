@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(Integer userId) {
         // 使用者刪除後，名下相關資產也應該跟著刪除
-        assetRepository.deleteByUserId(userId);
+        assetRepository.deleteByUser_UserId(userId);
         userRepository.deleteById(userId);
     }
 
