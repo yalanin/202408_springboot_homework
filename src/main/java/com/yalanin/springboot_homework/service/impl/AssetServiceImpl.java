@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -57,6 +58,9 @@ public class AssetServiceImpl implements AssetService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         Asset newAsset = modelMapper.map(assetCreateRequest, Asset.class);
+        newAsset.setCreatedAt(new Date());
+        newAsset.setUpdatedAt(new Date());
+        newAsset.setUser(user);
         Asset createdAsset = assetRepository.save(newAsset);
         return createdAsset.getAsset_id();
     }

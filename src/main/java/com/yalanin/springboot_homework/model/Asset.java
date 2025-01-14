@@ -83,4 +83,6 @@ public class Asset {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public void setUser(User user) { this.user = user; }
 }
