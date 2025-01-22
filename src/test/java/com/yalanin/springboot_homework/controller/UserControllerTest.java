@@ -1,11 +1,12 @@
 package com.yalanin.springboot_homework.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yalanin.springboot_homework.dao.UserDao;
 import com.yalanin.springboot_homework.dto.UserRegisterRequest;
 import com.yalanin.springboot_homework.dto.UserRequest;
+import com.yalanin.springboot_homework.jpa_repository.UserRepository;
 import com.yalanin.springboot_homework.model.User;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
+import java.util.Optional;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -29,7 +30,10 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserDao userDao;
+    private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -55,7 +59,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.updated_at", notNullValue()));
 
         // 檢查資料庫中的密碼不為明碼
-        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
+        User user = userRepository.findByEmail(userRegisterRequest.getEmail());
         assertNotEquals(userRegisterRequest.getPassword(), user.getPassword());
     }
 
@@ -95,7 +99,9 @@ class UserControllerTest {
         // createUser();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/{userId}", 2);
-        User user = userDao.getUserById(2);
+        Optional<User> userOptional = userRepository.findById(2);
+        User user = userOptional.get();
+
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
