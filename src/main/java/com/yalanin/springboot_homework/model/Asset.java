@@ -2,11 +2,15 @@ package com.yalanin.springboot_homework.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "assets")
+@EntityListeners(AuditingEntityListener.class)
 public class Asset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +29,13 @@ public class Asset {
     @JsonProperty("created_at")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false)
+    @CreatedDate
     private Date createdAt;
 
     @JsonProperty("updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)
+    @LastModifiedDate
     private Date updatedAt;
 
     @ManyToOne

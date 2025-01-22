@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
-
 @Component
 public class UserServiceImpl implements UserService {
     private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -47,9 +45,6 @@ public class UserServiceImpl implements UserService {
         userRegisterRequest.setPassword(hashedPassword);
 
         User newUser = modelMapper.map(userRegisterRequest, User.class);
-        newUser.setCreatedAt(new Date());
-        newUser.setUpdatedAt(new Date());
-
         User createdUser = userRepository.save(newUser);
         return createdUser.getUserId();
     }
